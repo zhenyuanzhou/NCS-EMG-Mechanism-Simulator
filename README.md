@@ -19,7 +19,7 @@ contributing — not because a parameter was tied to a curve.
 
 <video src="https://github.com/zhenyuanzhou/NCS-EMG-Mechanism-Simulator/raw/main/demo/demo-en.mp4" controls width="100%"></video>
 
-**▶ [English version](demo/demo-en.mp4)** (5 min 27 s)  ·  **▶ [中文版](demo/demo-zh.mp4)** (4 min 58 s)
+**▶ [English version](demo/demo-en.mp4)** (5 min 29 s)  ·  **▶ [中文版](demo/demo-zh.mp4)** (4 min 55 s)
 
 Each version is complete in its own language — interface, captions and narration.
 

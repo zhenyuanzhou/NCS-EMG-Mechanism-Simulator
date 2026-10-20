@@ -17,6 +17,10 @@ const ci = process.argv.indexOf('--crf');
 const crf = ci > 0 ? process.argv[ci + 1] : '26';
 
 const tl = JSON.parse(fs.readFileSync(timelineFile, 'utf8'));
+// Drop the pre-roll: page load and the first render are dead air, and on a file that boots in
+// one language they are the only frames a viewer should never see. Open just before scene 1.
+const PRE_ROLL_MS = 700;
+const trimMs = Math.max(0, Math.round((tl.scenes[0]?.startMs ?? 0) - PRE_ROLL_MS));
 const clips = [];
 for (const s of tl.scenes) {
   const f = path.join(wavDir, `${s.id}.wav`);
@@ -24,7 +28,7 @@ for (const s of tl.scenes) {
     console.warn(`missing clip: ${s.id}`);
     continue;
   }
-  clips.push({ file: f, delay: Math.round(s.voiceAtMs) });
+  clips.push({ file: f, delay: Math.max(0, Math.round(s.voiceAtMs) - trimMs) });
 }
 if (!clips.length) {
   console.error('no clips found in ' + wavDir);
@@ -37,7 +41,7 @@ if (!clips.length) {
 const probed = Number(execFileSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', video]).toString().trim());
 const realSec = tl.endMs / 1000;
 const factor = probed / realSec;
-console.log(`video ${probed.toFixed(2)}s tagged vs ${realSec.toFixed(2)}s real → retime x${factor.toFixed(4)}`);
+console.log(`video ${probed.toFixed(2)}s tagged vs ${realSec.toFixed(2)}s real → retime x${factor.toFixed(4)}; trim ${(trimMs / 1000).toFixed(2)}s of pre-roll`);
 
 const args = ['-y', '-loglevel', 'error', '-i', video];
 clips.forEach((c) => args.push('-i', c.file));
@@ -46,7 +50,7 @@ const mix = clips.map((_, i) => `[a${i}]`).join('');
 // normalize=0: the clips do not overlap, so summing keeps each at its own level
 const filter = `${parts.join(';')};${mix}amix=inputs=${clips.length}:normalize=0:dropout_transition=0[mixed];[mixed]volume=${gain},loudnorm=I=-17:TP=-1.5:LRA=11[aout]`;
 args.push(
-  '-filter_complex', `[0:v]setpts=PTS/${factor.toFixed(6)},fps=30[v];${filter}`,
+  '-filter_complex', `[0:v]setpts=PTS/${factor.toFixed(6)},fps=30,trim=start=${(trimMs / 1000).toFixed(3)},setpts=PTS-STARTPTS[v];${filter}`,
   '-map', '[v]', '-map', '[aout]',
   '-c:v', 'libx264', '-preset', 'slow', '-crf', crf, '-pix_fmt', 'yuv420p',
   '-c:a', 'aac', '-b:a', '128k', '-ar', '48000',

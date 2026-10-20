@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<!-- emg-ncs-mechanism-simulator v0.1.0 · built 2026-10-20T01:58:42.124Z · single-file bundle of src/ -->
+<!-- emg-ncs-mechanism-simulator v0.1.0 · built 2026-10-20T07:20:19.945Z · single-file bundle of src/ -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>NCS/EMG Mechanism Simulator</title>
@@ -11819,8 +11819,9 @@ const { LESSONS } = __m["content/lessons.js"];
 // Entry point.
 const { App } = __m["ui/app.js"];
 const { MODULES } = __m["ui/modules/index.js"];
+const { getLang } = __m["content/i18n.js"];
 
-document.documentElement.lang = 'zh-CN';
+document.documentElement.lang = getLang() === 'en' ? 'en' : 'zh-CN';
 const app = new App(MODULES);
 window.__app = app; // for debugging and automated demos
 window.__LESSONS = LESSONS;

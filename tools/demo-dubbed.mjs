@@ -11,6 +11,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import url from 'node:url';
+import { spawn } from 'node:child_process';
 import { chromium } from '/opt/npm-tools/node_modules/playwright/index.mjs';
 
 const root = path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), '..');
@@ -49,14 +50,28 @@ const SCENES = [
   { id: '19_outro', zh: '所有波形均由模型实时生成并测量', en: 'All waveforms are generated and measured by the model', setup: `__caption_only()` },
 ];
 
+// Serve over http: the app stores its language in localStorage, which file:// does not allow.
+// Setting it before the first paint means the interface is never rendered in the wrong
+// language — switching after load would leave the opening seconds in the other language.
+const PORT = 8099;
+const server = spawn(process.execPath, [path.join(root, 'tools', 'serve.mjs'), String(PORT)], { stdio: 'ignore' });
+await new Promise((r) => setTimeout(r, 900));
+
 const browser = await chromium.launch();
 const ctx = await browser.newContext({ viewport: { width: W, height: H }, recordVideo: { dir: outDir, size: { width: W, height: H } }, deviceScaleFactor: 1 });
+await ctx.addInitScript((lang) => {
+  try {
+    localStorage.setItem('emgsim.lang', lang);
+  } catch (e) {
+    /* storage unavailable: the app falls back to its default */
+  }
+}, LANG);
 const page = await ctx.newPage();
 const t0 = Date.now();
 const errors = [];
 page.on('pageerror', (e) => errors.push(e.message));
 page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
-await page.goto('file://' + path.join(root, 'dist', 'index.html'));
+await page.goto(`http://localhost:${PORT}/dist/index.html`);
 await page.waitForTimeout(2200);
 await page.evaluate((lang) => {
   window.__lang = lang;
@@ -81,13 +96,11 @@ await page.evaluate((lang) => {
   };
 }, LANG);
 
-if (LANG === 'en') {
-  // switch the application itself to English before the first scene
-  await page.evaluate(() => document.querySelectorAll('#lang-seg button')[1].click());
-  await page.waitForTimeout(1500);
-  const ok = await page.evaluate(() => document.documentElement.lang);
-  if (!ok.startsWith('en')) errors.push('interface did not switch to English');
-  console.log(`interface language: ${ok}`);
+{
+  const got = await page.evaluate(() => document.documentElement.lang);
+  const want = LANG === 'en' ? 'en' : 'zh';
+  if (!got.startsWith(want)) errors.push(`interface booted as "${got}", wanted ${want}`);
+  console.log(`interface language: ${got}`);
 }
 
 const timeline = [];
@@ -113,6 +126,19 @@ for (const s of SCENES) {
     }
   }
   await page.waitForTimeout(hold);
+  if (LANG === 'en') {
+    const cjk = await page.evaluate(() => {
+      // the language switcher's own "中文" button is meant to stay Chinese
+      const sw = document.getElementById('lang-seg');
+      const t = [...document.body.querySelectorAll('*')]
+        .filter((el) => !sw || !sw.contains(el))
+        .map((el) => [...el.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent).join(''))
+        .join(' ');
+      const m = t.match(/[\u4e00-\u9fff]+/g);
+      return m ? [...new Set(m)].slice(0, 6) : null;
+    });
+    if (cjk) errors.push(`[${s.id}] Chinese text on screen: ${cjk.join(' ')}`);
+  }
   timeline.push({ id: s.id, startMs: start, holdMs: hold, narrMs: narr, voiceAtMs: start + LEAD });
   console.log(`${s.id.padEnd(14)} start ${(start / 1000).toFixed(2)}s  hold ${(hold / 1000).toFixed(2)}s  narr ${(narr / 1000).toFixed(2)}s`);
 }
@@ -120,6 +146,7 @@ const endMs = Date.now() - t0;
 const video = page.video();
 await ctx.close();
 await browser.close();
+server.kill();
 const p = await video.path();
 const dest = path.join(outDir, 'demo.webm');
 fs.renameSync(p, dest);
