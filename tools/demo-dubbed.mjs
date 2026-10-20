@@ -3,8 +3,10 @@
 // is slowed so that it finishes exactly within that scene — so the picture and the voice stay
 // together without cutting either.
 //
-// Usage: node tools/demo-dubbed.mjs <outDir> [timings.json]
+// Usage: node tools/demo-dubbed.mjs <outDir> [timings.json] [lang]
 //   timings.json: { "<scene id>": <seconds>, ... }  (from the TTS step; defaults used if absent)
+//   lang: 'zh' (default) or 'en' — sets the application's own interface language AND the
+//         caption language, so an English tour is English throughout, not just in the voice.
 // Writes <outDir>/demo.webm and <outDir>/timeline.json (scene start times, for the audio mux).
 import fs from 'node:fs';
 import path from 'node:path';
@@ -14,6 +16,7 @@ import { chromium } from '/opt/npm-tools/node_modules/playwright/index.mjs';
 const root = path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), '..');
 const outDir = process.argv[2] || path.join(root, 'dist', 'video');
 const timingsFile = process.argv[3];
+const LANG = (process.argv[4] || 'zh').toLowerCase() === 'en' ? 'en' : 'zh';
 const timings = timingsFile && fs.existsSync(timingsFile) ? JSON.parse(fs.readFileSync(timingsFile, 'utf8')) : {};
 fs.mkdirSync(outDir, { recursive: true });
 
@@ -55,13 +58,16 @@ page.on('pageerror', (e) => errors.push(e.message));
 page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
 await page.goto('file://' + path.join(root, 'dist', 'index.html'));
 await page.waitForTimeout(2200);
-await page.evaluate(() => {
+await page.evaluate((lang) => {
+  window.__lang = lang;
   const d = document.createElement('div');
   d.id = '__cap';
   d.style.cssText =
     'position:fixed;left:50%;bottom:18px;transform:translateX(-50%);max-width:1150px;background:rgba(20,24,30,.88);color:#fff;font:600 17px/1.45 system-ui,sans-serif;padding:10px 18px;border-radius:10px;z-index:9999;text-align:center;pointer-events:none';
   document.body.appendChild(d);
-  window.__caption = (zh, en) => (d.innerHTML = `${zh}<br><span style="font-weight:500;font-size:14px;opacity:.85">${en}</span>`);
+  // an English tour shows one English line; the Chinese tour keeps the English term line under it
+  window.__caption = (zh, en) =>
+    (d.innerHTML = window.__lang === 'en' ? en : `${zh}<br><span style="font-weight:500;font-size:14px;opacity:.85">${en}</span>`);
   window.__set = (patch, key) => window.__app.setParams({ ...JSON.parse(JSON.stringify(window.__app.p)), ...patch }, key);
   window.__caption_only = () => {};
   // play the physiological animation so that it fills exactly `ms` of wall-clock time
@@ -73,7 +79,16 @@ await page.evaluate(() => {
     a.t = w.t0;
     a.playing = true;
   };
-});
+}, LANG);
+
+if (LANG === 'en') {
+  // switch the application itself to English before the first scene
+  await page.evaluate(() => document.querySelectorAll('#lang-seg button')[1].click());
+  await page.waitForTimeout(1500);
+  const ok = await page.evaluate(() => document.documentElement.lang);
+  if (!ok.startsWith('en')) errors.push('interface did not switch to English');
+  console.log(`interface language: ${ok}`);
+}
 
 const timeline = [];
 for (const s of SCENES) {
@@ -108,6 +123,6 @@ await browser.close();
 const p = await video.path();
 const dest = path.join(outDir, 'demo.webm');
 fs.renameSync(p, dest);
-fs.writeFileSync(path.join(outDir, 'timeline.json'), JSON.stringify({ endMs, lead: LEAD, scenes: timeline }, null, 1));
+fs.writeFileSync(path.join(outDir, 'timeline.json'), JSON.stringify({ endMs, lead: LEAD, lang: LANG, scenes: timeline }, null, 1));
 console.log(errors.length ? 'ERRORS:\n' + errors.join('\n') : 'no page errors');
 console.log(`total ${(endMs / 1000).toFixed(1)}s →`, dest);

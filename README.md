@@ -19,7 +19,9 @@ contributing — not because a parameter was tied to a curve.
 
 <video src="https://github.com/zhenyuanzhou/NCS-EMG-Mechanism-Simulator/raw/main/demo/demo-en.mp4" controls width="100%"></video>
 
-**▶ [English narration](demo/demo-en.mp4)**  ·  **▶ [中文解说](demo/demo-zh.mp4)** — 5 min 34 s
+**▶ [English version](demo/demo-en.mp4)** (5 min 27 s)  ·  **▶ [中文版](demo/demo-zh.mp4)** (4 min 58 s)
+
+Each version is complete in its own language — interface, captions and narration.
 
 The tour runs the real application: normal conduction, axonal loss, conduction block and
 temporal dispersion, needle EMG from fibres to recruitment, myopathy, chronic reinnervation,
