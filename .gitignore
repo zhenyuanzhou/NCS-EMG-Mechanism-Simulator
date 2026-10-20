@@ -5,3 +5,5 @@ dist/video/
 # local recordings and scratch output
 *.webm
 qwen3_tts_*output*/
+# raw narration clips and intermediate recordings live outside the repo
+dub/

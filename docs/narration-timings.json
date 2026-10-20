@@ -1,0 +1,102 @@
+{
+ "language": "en",
+ "speaker": "Ryan",
+ "total_seconds": 285.44,
+ "segments": [
+  {
+   "id": "01_basics",
+   "file": "D:\\EMG\\dub\\wav\\en\\01_basics.wav",
+   "seconds": 18.08
+  },
+  {
+   "id": "02_ncs",
+   "file": "D:\\EMG\\dub\\wav\\en\\02_ncs.wav",
+   "seconds": 19.28
+  },
+  {
+   "id": "03_axonal",
+   "file": "D:\\EMG\\dub\\wav\\en\\03_axonal.wav",
+   "seconds": 16.16
+  },
+  {
+   "id": "04_block",
+   "file": "D:\\EMG\\dub\\wav\\en\\04_block.wav",
+   "seconds": 12.72
+  },
+  {
+   "id": "05_dispersion",
+   "file": "D:\\EMG\\dub\\wav\\en\\05_dispersion.wav",
+   "seconds": 15.36
+  },
+  {
+   "id": "06_muap",
+   "file": "D:\\EMG\\dub\\wav\\en\\06_muap.wav",
+   "seconds": 12.8
+  },
+  {
+   "id": "07_myopathy",
+   "file": "D:\\EMG\\dub\\wav\\en\\07_myopathy.wav",
+   "seconds": 15.68
+  },
+  {
+   "id": "08_reinn",
+   "file": "D:\\EMG\\dub\\wav\\en\\08_reinn.wav",
+   "seconds": 15.84
+  },
+  {
+   "id": "09_fib",
+   "file": "D:\\EMG\\dub\\wav\\en\\09_fib.wav",
+   "seconds": 18.08
+  },
+  {
+   "id": "10_myotonic",
+   "file": "D:\\EMG\\dub\\wav\\en\\10_myotonic.wav",
+   "seconds": 12.4
+  },
+  {
+   "id": "11_course12h",
+   "file": "D:\\EMG\\dub\\wav\\en\\11_course12h.wav",
+   "seconds": 14.08
+  },
+  {
+   "id": "12_course10",
+   "file": "D:\\EMG\\dub\\wav\\en\\12_course10.wav",
+   "seconds": 9.36
+  },
+  {
+   "id": "13_course21",
+   "file": "D:\\EMG\\dub\\wav\\en\\13_course21.wav",
+   "seconds": 12.56
+  },
+  {
+   "id": "14_course1y",
+   "file": "D:\\EMG\\dub\\wav\\en\\14_course1y.wav",
+   "seconds": 13.04
+  },
+  {
+   "id": "15_radic",
+   "file": "D:\\EMG\\dub\\wav\\en\\15_radic.wav",
+   "seconds": 20.56
+  },
+  {
+   "id": "16_plexus",
+   "file": "D:\\EMG\\dub\\wav\\en\\16_plexus.wav",
+   "seconds": 16.48
+  },
+  {
+   "id": "17_nmj",
+   "file": "D:\\EMG\\dub\\wav\\en\\17_nmj.wav",
+   "seconds": 17.6
+  },
+  {
+   "id": "18_fwave",
+   "file": "D:\\EMG\\dub\\wav\\en\\18_fwave.wav",
+   "seconds": 21.36
+  },
+  {
+   "id": "19_outro",
+   "file": "D:\\EMG\\dub\\wav\\en\\19_outro.wav",
+   "seconds": 4.0
+  }
+ ]
+}

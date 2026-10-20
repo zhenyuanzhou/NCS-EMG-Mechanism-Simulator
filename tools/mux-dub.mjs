@@ -13,6 +13,8 @@ if (!video || !timelineFile || !wavDir || !out) {
 }
 const gi = process.argv.indexOf('--gain');
 const gain = gi > 0 ? Number(process.argv[gi + 1]) : 1.0;
+const ci = process.argv.indexOf('--crf');
+const crf = ci > 0 ? process.argv[ci + 1] : '26';
 
 const tl = JSON.parse(fs.readFileSync(timelineFile, 'utf8'));
 const clips = [];
@@ -46,7 +48,7 @@ const filter = `${parts.join(';')};${mix}amix=inputs=${clips.length}:normalize=0
 args.push(
   '-filter_complex', `[0:v]setpts=PTS/${factor.toFixed(6)},fps=30[v];${filter}`,
   '-map', '[v]', '-map', '[aout]',
-  '-c:v', 'libx264', '-preset', 'medium', '-crf', '26', '-pix_fmt', 'yuv420p',
+  '-c:v', 'libx264', '-preset', 'slow', '-crf', crf, '-pix_fmt', 'yuv420p',
   '-c:a', 'aac', '-b:a', '128k', '-ar', '48000',
   '-movflags', '+faststart',
   out
