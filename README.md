@@ -146,6 +146,14 @@ throughout the app and the docs use **printed** page numbers.
 All illustrations are original schematics drawn by code. No figure from the textbook is
 reproduced.
 
+## Licence
+
+[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
+
+Released under [Creative Commons Attribution-NonCommercial 4.0 International](LICENSE)
+(CC BY-NC 4.0). You may share and adapt it — including for teaching — provided you give
+attribution and do not use it commercially. For commercial use, please ask.
+
 ## Disclaimer
 
 This is a **teaching model** — not a diagnostic tool, and not a laboratory reference. Values
