@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NCS/EMG Mechanism Simulator</title>
+<link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+<div class="app" id="app">
+  <header class="top">
+    <div class="brand">
+      <h1 id="app-title">神经传导与肌电图机制模拟器</h1>
+      <span class="sub" id="app-sub">NCS &amp; needle EMG · mechanism simulator</span>
+    </div>
+    <div class="seg" id="mode-seg" role="tablist" aria-label="mode"></div>
+    <div class="seg" id="lang-seg" aria-label="language"></div>
+    <button class="btn" id="btn-model">模型与来源</button>
+  </header>
+  <nav class="modules" id="module-nav"></nav>
+  <main class="workspace">
+    <aside class="panel" id="controls"></aside>
+    <section class="center">
+      <div class="panel">
+        <div class="panel-head">
+          <h3 id="anat-title">解剖与机制</h3>
+          <span class="grow"></span>
+          <div class="scale-tabs"><div class="seg" id="scale-seg"></div></div>
+        </div>
+        <div class="canvas-wrap"><canvas id="anatomy-canvas"></canvas></div>
+        <div class="legend" id="anat-legend"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <h3 id="scope-title">记录波形</h3>
+          <span class="grow"></span>
+          <div class="scope-tools" id="scope-tools"></div>
+        </div>
+        <div class="canvas-wrap"><canvas id="scope-canvas"></canvas></div>
+        <div class="legend" id="scope-legend"></div>
+        <div class="transport" id="transport"></div>
+      </div>
+    </section>
+    <aside class="panel" id="explain"></aside>
+  </main>
+</div>
+<div class="modal-bg" id="modal"><div class="modal"><div class="head"><h2 id="modal-title"></h2><button class="btn small" id="modal-close">✕</button></div><div class="body" id="modal-body"></div></div></div>
+<script type="module" src="./main.js"></script>
+</body>
+</html>

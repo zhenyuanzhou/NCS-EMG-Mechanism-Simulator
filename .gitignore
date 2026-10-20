@@ -1,0 +1,7 @@
+node_modules/
+# build output: dist/index.html IS committed so the app can be downloaded and opened directly
+dist/artifact.html
+dist/video/
+# local recordings and scratch output
+*.webm
+qwen3_tts_*output*/

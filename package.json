@@ -1,0 +1,12 @@
+{
+  "name": "emg-ncs-mechanism-simulator",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Interactive mechanism simulator for nerve conduction studies and needle EMG (teaching tool)",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "build": "node tools/build.mjs",
+    "serve": "node tools/serve.mjs"
+  }
+}
